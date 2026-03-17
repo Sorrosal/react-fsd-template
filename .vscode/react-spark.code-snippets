@@ -1,0 +1,187 @@
+{
+  "FSD React Component": {
+    "scope": "typescriptreact",
+    "prefix": "fsd-component",
+    "body": [
+      "interface ${1:Component}Props {",
+      "  $2",
+      "}",
+      "",
+      "export function ${1:Component}({ $3 }: ${1:Component}Props) {",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "FSD React component with typed props interface"
+  },
+  "FSD Page Component": {
+    "scope": "typescriptreact",
+    "prefix": "fsd-page",
+    "body": [
+      "export default function ${1:Name}Page() {",
+      "  return (",
+      "    <div>",
+      "      <h1>${2:Page Title}</h1>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "FSD Page component with default export for lazy loading"
+  },
+  "FSD Zustand Store": {
+    "scope": "typescript",
+    "prefix": "fsd-store",
+    "body": [
+      "import { create } from 'zustand';",
+      "",
+      "interface ${1:Name}State {",
+      "  $2: $3;",
+      "  set${2/(.*)/${2:/capitalize}/}: (value: $3) => void;",
+      "}",
+      "",
+      "export const use${1:Name}Store = create<${1:Name}State>()((set) => ({",
+      "  $2: $4,",
+      "  set${2/(.*)/${2:/capitalize}/}: (value) => set({ $2: value }),",
+      "}));"
+    ],
+    "description": "FSD Zustand store with typed state and actions"
+  },
+  "FSD Query Hook": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "fsd-query",
+    "body": [
+      "import { useQuery } from '@tanstack/react-query';",
+      "import { api } from '@/shared/api/axios-instance';",
+      "",
+      "interface ${1:Name}Response {",
+      "  $2",
+      "}",
+      "",
+      "const ${1/(.*)/${1:/downcase}/}Keys = {",
+      "  all: ['${1/(.*)/${1:/downcase}/}s'] as const,",
+      "  detail: (id: string) => ['${1/(.*)/${1:/downcase}/}s', id] as const,",
+      "};",
+      "",
+      "async function fetch${1:Name}s(): Promise<${1:Name}Response[]> {",
+      "  const { data } = await api.get<${1:Name}Response[]>('/${1/(.*)/${1:/downcase}/}s');",
+      "  return data;",
+      "}",
+      "",
+      "export function use${1:Name}s() {",
+      "  return useQuery({",
+      "    queryKey: ${1/(.*)/${1:/downcase}/}Keys.all,",
+      "    queryFn: fetch${1:Name}s,",
+      "  });",
+      "}"
+    ],
+    "description": "FSD TanStack Query hook with typed response and query keys"
+  },
+  "FSD Mutation Hook": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "fsd-mutation",
+    "body": [
+      "import { useMutation, useQueryClient } from '@tanstack/react-query';",
+      "import { api } from '@/shared/api/axios-instance';",
+      "",
+      "interface ${1:Name}Request {",
+      "  $2",
+      "}",
+      "",
+      "interface ${1:Name}Response {",
+      "  $3",
+      "}",
+      "",
+      "async function ${1/(.*)/${1:/downcase}/}${4:Create}(payload: ${1:Name}Request): Promise<${1:Name}Response> {",
+      "  const { data } = await api.post<${1:Name}Response>('/${1/(.*)/${1:/downcase}/}s', payload);",
+      "  return data;",
+      "}",
+      "",
+      "export function use${4:Create}${1:Name}() {",
+      "  const queryClient = useQueryClient();",
+      "",
+      "  return useMutation({",
+      "    mutationFn: ${1/(.*)/${1:/downcase}/}${4:Create},",
+      "    onSuccess: () => {",
+      "      void queryClient.invalidateQueries({ queryKey: ['${1/(.*)/${1:/downcase}/}s'] });",
+      "    },",
+      "  });",
+      "}"
+    ],
+    "description": "FSD TanStack Mutation hook with cache invalidation"
+  },
+  "FSD Zod Schema": {
+    "scope": "typescript",
+    "prefix": "fsd-schema",
+    "body": [
+      "import { z } from 'zod';",
+      "",
+      "export const ${1:name}Schema = z.object({",
+      "  $2: z.string()$3,",
+      "});",
+      "",
+      "export type ${1/(.*)/${1:/capitalize}/} = z.infer<typeof ${1:name}Schema>;"
+    ],
+    "description": "FSD Zod schema with inferred type"
+  },
+  "FSD Form with RHF + Zod": {
+    "scope": "typescriptreact",
+    "prefix": "fsd-form",
+    "body": [
+      "import { useForm } from 'react-hook-form';",
+      "import { zodResolver } from '@hookform/resolvers/zod';",
+      "import type { z } from 'zod';",
+      "import { ${1:name}Schema } from '../model/${2:file}.schemas';",
+      "",
+      "type FormValues = z.infer<typeof ${1:name}Schema>;",
+      "",
+      "export function ${3:Name}Form() {",
+      "  const {",
+      "    register,",
+      "    handleSubmit,",
+      "    formState: { errors, isSubmitting },",
+      "  } = useForm<FormValues>({",
+      "    resolver: zodResolver(${1:name}Schema),",
+      "  });",
+      "",
+      "  function onSubmit(data: FormValues) {",
+      "    $0",
+      "  }",
+      "",
+      "  return (",
+      "    <form onSubmit={handleSubmit(onSubmit)} noValidate>",
+      "      {/* form fields here */}",
+      "    </form>",
+      "  );",
+      "}"
+    ],
+    "description": "FSD Form component with React Hook Form + Zod resolver"
+  },
+  "FSD Barrel Export": {
+    "scope": "typescript",
+    "prefix": "fsd-barrel",
+    "body": [
+      "export { ${1:Component} } from './ui/${1:Component}';",
+      "export { use${2:Name}Store } from './model/${3:name}.store';",
+      "$0"
+    ],
+    "description": "FSD barrel index.ts with public API exports"
+  },
+  "FSD Custom Hook": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "fsd-hook",
+    "body": [
+      "import { ${1|useState,useEffect,useCallback,useMemo,useRef|} } from 'react';",
+      "",
+      "export function use${2:Name}($3) {",
+      "  $0",
+      "",
+      "  return {};",
+      "}"
+    ],
+    "description": "FSD custom hook with named export"
+  }
+}
